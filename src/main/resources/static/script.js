@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Get references to the DOM elements
     const submitForm = document.getElementById("submitForm");
     const fetchEntriesBtn = document.getElementById("fetchEntriesBtn");
     const fetchEntryByIdBtn = document.getElementById("fetchEntryByIdBtn");
@@ -6,8 +7,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const entriesList = document.getElementById("entriesList");
     const singleEntry = document.getElementById("singleEntry");
 
-    // Submit finance entry
-    submitForm.addEventListener("submit", async function (event) {
+    // Function to display messages in the body
+    function displayMessage(message) {
+        const messageBox = document.createElement("div");
+        messageBox.innerText = message;
+        document.body.appendChild(messageBox);
+        setTimeout(() => messageBox.remove(), 3000); // Remove message after 3 seconds
+    }
+
+    // Handle form submission to submit finance entry
+    submitForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
         const amount = document.getElementById("amount").value;
@@ -15,92 +24,84 @@ document.addEventListener("DOMContentLoaded", function () {
         const category = document.getElementById("category").value;
         const date = document.getElementById("date").value;
 
-        try {
-            const response = await fetch("http://localhost:8080/submit", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: new URLSearchParams({
-                    amount: amount,
-                    description: description,
-                    category: category,
-                    date: date
-                })
+        fetch(`/submit?amount=${amount}&description=${description}&category=${category}&date=${date}`, {
+            method: "POST",
+        })
+            .then(response => response.json())
+            .then(data => {
+                displayMessage("Finance entry submitted successfully!");
+                submitForm.reset(); // Reset the form after submission
+            })
+            .catch(error => {
+                console.error("Error submitting entry:", error);
+                displayMessage("Error submitting entry.");
             });
-            if (!response.ok) throw new Error("Failed to submit entry");
-            alert("Entry submitted successfully!");
-            submitForm.reset();
-        } catch (error) {
-            console.error("Error submitting entry:", error);
-            alert("Failed to submit entry");
-        }
     });
 
     // Fetch all finance entries
-    fetchEntriesBtn.addEventListener("click", async function () {
-        try {
-            const response = await fetch("http://localhost:8080/all");
-            if (!response.ok) throw new Error("Failed to fetch entries");
-            const data = await response.json();
-
-            if (data.length === 0) {
-                entriesList.innerHTML = "<p>No entries found.</p>";
-                return;
-            }
-
-            let tableHtml = `<table border='1'>
-                        <tr><th>ID</th><th>Amount</th><th>Description</th><th>Category</th><th>Date</th></tr>`;
-            data.forEach(entry => {
-                tableHtml += `<tr>
-                        <td>${entry.id}</td>
-                        <td>${entry.amount}</td>
-                        <td>${entry.description}</td>
-                        <td>${entry.category}</td>
-                        <td>${entry.date}</td>
-                    </tr>`;
+    fetchEntriesBtn.addEventListener("click", function () {
+        fetch("/all")
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    entriesList.innerHTML = "<h3>All Entries</h3>";
+                    data.forEach(entry => {
+                        const entryDiv = document.createElement("div");
+                        entryDiv.innerHTML = `
+                        <p>ID: ${entry.id} | Amount: ${entry.amount} | Description: ${entry.description} | Category: ${entry.category} | Date: ${entry.date}</p>
+                    `;
+                        entriesList.appendChild(entryDiv);
+                    });
+                    displayMessage("Fetched all entries successfully!");
+                } else {
+                    entriesList.innerHTML = "<p>No entries found.</p>";
+                    displayMessage("No entries found.");
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching entries:", error);
+                displayMessage("Error fetching entries.");
             });
-            tableHtml += "</table>";
-            entriesList.innerHTML = tableHtml;
-        } catch (error) {
-            console.error("Error fetching entries:", error);
-            alert("Error fetching entries!");
-        }
     });
 
-    // Fetch single entry by ID
-    fetchEntryByIdBtn.addEventListener("click", async function () {
+    // Fetch a specific finance entry by ID
+    fetchEntryByIdBtn.addEventListener("click", function () {
         const entryId = document.getElementById("entryId").value;
-        if (!entryId) return alert("Please enter an entry ID");
 
-        try {
-            const response = await fetch(`http://localhost:8080/entry?id=${entryId}`);
-            if (!response.ok) throw new Error("Failed to fetch entry");
-            const entry = await response.json();
-            singleEntry.innerHTML = `<p><strong>ID:</strong> ${entry.id}<br>
-                                     <strong>Amount:</strong> ${entry.amount}<br>
-                                     <strong>Description:</strong> ${entry.description}<br>
-                                     <strong>Category:</strong> ${entry.category}<br>
-                                     <strong>Date:</strong> ${entry.date}</p>`;
-        } catch (error) {
-            console.error("Error fetching entry:", error);
-            alert("Failed to fetch entry");
-        }
+        fetch(`/entry?id=${entryId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    singleEntry.innerHTML = `
+                    <h3>Entry Details</h3>
+                    <p>ID: ${data.id} | Amount: ${data.amount} | Description: ${data.description} | Category: ${data.category} | Date: ${data.date}</p>
+                `;
+                    displayMessage("Entry fetched successfully!");
+                } else {
+                    singleEntry.innerHTML = "<p>No entry found for the given ID.</p>";
+                    displayMessage("No entry found for the given ID.");
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching entry by ID:", error);
+                displayMessage("Error fetching entry by ID.");
+            });
     });
 
-    // Delete entry by ID
-    deleteEntryBtn.addEventListener("click", async function () {
+    // Delete a finance entry by ID
+    deleteEntryBtn.addEventListener("click", function () {
         const entryIdToDelete = document.getElementById("entryIdToDelete").value;
-        if (!entryIdToDelete) return alert("Please enter an entry ID to delete");
 
-        try {
-            const response = await fetch(`http://localhost:8080/delete?id=${entryIdToDelete}`, {
-                method: "DELETE"
+        fetch(`/delete?id=${entryIdToDelete}`, {
+            method: "DELETE",
+        })
+            .then(response => response.text())
+            .then(message => {
+                displayMessage(message);
+            })
+            .catch(error => {
+                console.error("Error deleting entry:", error);
+                displayMessage("Error deleting entry.");
             });
-            if (!response.ok) throw new Error("Failed to delete entry");
-            alert("Entry deleted successfully");
-            document.getElementById("entryIdToDelete").value = "";
-        } catch (error) {
-            console.error("Error deleting entry:", error);
-            alert("Failed to delete entry");
-        }
     });
 });
