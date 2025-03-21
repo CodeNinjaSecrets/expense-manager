@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finance Tracker</title>
-    <link rel="stylesheet" href="/styles.css">
-
-
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="container">
     <h1>Finance Tracker</h1>
 
+    <!-- Form for submitting finance entry -->
     <form id="submitForm">
         <h2>Submit Finance Entry</h2>
         <input type="number" id="amount" placeholder="Amount" required>
@@ -21,25 +20,28 @@
         <button type="submit">Submit</button>
     </form>
 
+    <!-- Button to fetch all finance entries -->
     <button id="fetchEntriesBtn">Get All Entries</button>
 
+    <!-- Form to fetch a specific entry by ID -->
     <div id="getEntryForm">
         <h2>Get Entry by ID</h2>
         <input type="number" id="entryId" placeholder="Entry ID" required>
         <button id="fetchEntryByIdBtn">Get Entry</button>
     </div>
 
+    <!-- Form to delete entry by ID -->
     <div id="deleteForm">
         <h2>Delete Entry</h2>
         <input type="number" id="entryIdToDelete" placeholder="Entry ID" required>
         <button id="deleteEntryBtn">Delete Entry</button>
     </div>
 
+    <!-- Display results -->
     <div id="entriesList"></div>
     <div id="singleEntry"></div>
 </div>
 
-
-<script src="/js/script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
