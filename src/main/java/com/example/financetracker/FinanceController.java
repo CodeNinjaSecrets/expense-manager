@@ -22,7 +22,7 @@ public class FinanceController {
     @PostMapping("/submit")
     public FinanceTable submitFinance(@RequestParam int amount, @RequestParam String description,
                                       @RequestParam String category, @RequestParam String date) {
-        // Convert string date to LocalDate
+        // Convert string date to LocalDates
         LocalDate localDate = LocalDate.parse(date);
         return financeService.amountSubmit(amount, description, category, localDate);
     }
