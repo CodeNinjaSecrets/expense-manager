@@ -1,4 +1,4 @@
-# Expense Manager - Full-Stack Finance Tracker 💸
+# Expense Manager 💸
 
 A full-stack finance tracker built with **Spring Boot**, **Java 17**, **HTML**, **CSS**, and **JavaScript**. It allows users to manage their finances by adding, viewing, and deleting transactions.
 
