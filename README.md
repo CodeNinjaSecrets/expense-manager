@@ -7,13 +7,12 @@ A full-stack finance tracker built with **Spring Boot**, **Java 17**, **HTML**, 
 - **View Transactions**: Users can view a list of all their transactions.
 - **Delete Transactions**: Users can delete any transaction.
 
-### Work in Progress:
-- **User Authentication**: Currently working on implementing user authentication using **Spring Security**.
 
 ## Tech Stack
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Spring Boot, Java 17
 - **Database**: PostgreSQL
+- Docker Support
 
 ## Getting Started
 
